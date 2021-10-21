@@ -1,0 +1,81 @@
+package net.codejava;
+
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
+import com.mysql.cj.jdbc.DatabaseMetaData;
+
+import java.sql.ResultSet;
+
+
+public class Sighting {
+	
+	
+	public static void main(String[] args) {
+		String jdbcURL = "jdbc:mysql://localhost:3306/sampledbb";
+		String username = "root";
+		String password = "Noile!171";
+		
+		String longitude = "longitude";
+		String latitude = "latitude";
+		String image = "C:\\\\Desktop\\\\Flowers";
+		String flower_reference = "1";
+		
+		try {
+			 Connection connection = DriverManager.getConnection(jdbcURL, username, password);
+			
+			 String sql = "INSERT INTO sightings (longitude, latitude, flower_reference, image)" + "VALUES(?, ?, ?, ? )";
+			 
+			 // PreparedStatement statement = connection.prepareStatement(sql);
+			 PreparedStatement statement = connection.prepareStatement(sql,
+                     Statement.RETURN_GENERATED_KEYS);
+			 //   rs = meta.getImportedKeys(catalog, schema, tableName.toUpperCase());
+//  String importedKeysAsXML = DatabaseMetaDataTool.getImportedKeys(
+			 // conn, "octopus", null, tableName);/
+			 
+			 /*
+			  * DatabaseMetaData meta = connection.getMetaData();
+ResultSet tablesRs = meta.getTables(null, null, "table_name", new String[]{"TABLE"});
+			  * 
+			  * 
+			  * */
+			 
+			 DatabaseMetaData meta = (DatabaseMetaData) connection.getMetaData();
+			 ResultSet test = meta.getTables(null, null, "sightings", new String[] {"TABLE"} );
+			 
+			 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+		            if (generatedKeys.next()) {
+		            	System.out.println("found");
+		            	//user.setId(generatedKeys.getLong(1));
+		            }
+		            else {
+		            	System.out.println("failed");
+		                throw new SQLException("Creating user failed, no ID obtained.");
+		            }
+		        }
+			 
+			 
+			 statement.setString(1, longitude);
+			 statement.setString(2, latitude);
+			 statement.setString(3, flower_reference);
+			 statement.setString(4,image);		 
+			 int rows = statement.executeUpdate();				
+			 
+			 if(rows > 0) {
+				 System.out.println("Inserted");
+			 }
+				connection.close();
+			 
+			
+			
+		}catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+
+	}
+
+}

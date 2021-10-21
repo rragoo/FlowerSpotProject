@@ -1,0 +1,48 @@
+package net.codejava;
+
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
+public class FlowerManager {
+
+	public static void main(String[] args) {
+		
+		String jdbcURL = "jdbc:mysql://localhost:3306/sampledbb";
+		String username = "root";
+		String password = "Noile!171";
+		
+		String name = "Sunflower";
+		String image = "C:\\Desktop\\Flowers";
+		String description = "A yellow flower";
+		
+		try {
+			 
+		    Connection connection = DriverManager.getConnection(jdbcURL, username, password);
+		 
+		    
+		    String sql = "INSERT INTO flowers (name, image, description)" + 
+		    		" VALUES (?,?,?)";
+		    
+		    PreparedStatement statement = connection.prepareStatement(sql);
+		    statement.setString(1, name);
+		    statement.setString(2, image);
+		    statement.setString(3, description);
+		    
+		    int rows = statement.executeUpdate();
+		    if(rows > 0) {
+		    	System.out.println("A new flower has been inserted");
+		    }
+		    		    		    		   
+		    connection.close();
+		    
+		} catch (SQLException ex) {
+		    ex.printStackTrace();
+		}
+		
+		
+	}
+		
+}
